@@ -1,6 +1,8 @@
 # OpenThread implementation for Industry 4.0
 This application contains Openthread implementation for Inductry 4.0. It is an end to end applciation which contains OTnodes , OT borderrouter, Edge device and IoT backend using AWS serverless approach. To know more about Open thread concept you can read this [medium blog](https://medium.com/@vbsmandi/a-deep-dive-into-openthread-optimizing-iot-connectivity-f145a681008a)
- 
+
+![openthread_png](openThread.png,"oTImage")
+
 This repository contains 3 folders
 1. **OTNodes**: These are the open thread end nodes, REED and routers. Navigate to [OTNodes](OTNode) To know more.
 2. **OTLink**: This contains Open thread implementation for Border router. This also acts as Edge gateways tp process incoming samples from End nodes. Navigate to [OTLink](OTLink) To know more.
