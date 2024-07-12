@@ -1,0 +1,13 @@
+[Unit]
+Description=read from io.txt file and send to cloud
+After=dhcpcd.service
+
+[Service]
+WorkingDirectory=/home/pi/otlink
+User=pi
+#ExecStart=/bin/bash /home/pi/otlink/readFileInsertDB.sh
+ExecStart=/usr/bin/python3 /home/pi/otlink/readFileInsertDB.py
+
+[Install]
+WantedBy=multi-user.target
+

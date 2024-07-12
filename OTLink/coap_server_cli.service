@@ -1,0 +1,9 @@
+[Unit]
+Description=coap Server service
+
+[Service]
+WorkingDirectory=/home/pi
+ExecStart=/bin/bash /home/pi/otlink/coap_server.sh
+
+[Install]
+WantedBy=multi-user.target

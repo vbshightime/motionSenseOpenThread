@@ -1,0 +1,11 @@
+[Unit]
+Description=read from io.txt file and send to cloud
+
+[Service]
+WorkingDirectory=/home/pi/otlink
+User=pi
+ExecStart=/bin/bash /home/pi/otlink/reloadAndDelete.sh
+#ExecStart=/usr/bin/python3 /home/pi/otlink/cloudInteract.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+{
+    "pipelineName": "otserver_pipeline",
+    "pipelineActivities": [
+        {
+            "channel": {
+                "name": "mychannelactivity",
+                "channelName": "otserver_pipeline",
+                "next": "mystoreactivity"
+            }
+        },
+        {
+            "datastore": {
+                "name": "mystoreactivity",
+                "datastoreName": "otserver_datastore"
+            }
+        }
+    ]
+}

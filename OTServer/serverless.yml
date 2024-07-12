@@ -1,0 +1,122 @@
+service: otserver
+frameworkVersion: '2'
+
+plugins:
+  - serverless-offline
+  - serverless-pseudo-parameters
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  allowedHeaders:
+    - Accept
+    - Content-Type
+    - Content-Length
+    - Authorization
+    - X-Amz-Date
+    - X-Api-Key
+    - X-Amz-Security-Token
+    - X-Amz-User-Agent
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: ap-south-1
+  memorySize: 128
+  timeout: 15
+  endpointType: regional
+  environment:
+    BUILD_NUMBER: 2
+    DATA_TABLE: ${self:service}-${self:provider.name}-Data-${self:provider.environment.BUILD_NUMBER}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:BatchWriteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:#{AWS::AccountId}:table/${self:provider.environment.DATA_TABLE}"
+      
+  
+
+functions:
+  postIoTData:
+    handler: postIoTData.handler
+    description: iot Event
+    events:
+      - iot:
+          sql: "select * from 'otserver_thing'"
+          enabled: true
+          sqlVersion: 'beta'
+
+  postIoTDataTimeStream:
+    handler: postIoTDataTimeStream.handler
+    description: iot Event
+    events:
+      - iot:
+          sql: "select * from 'otserver_thing'"
+          enabled: true
+          sqlVersion: 'beta'
+
+  postData:
+    handler: postData.handler
+    description: POST /data
+    events:
+      - http:
+          path: data
+          method: post
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  getDevice:
+    handler: getDevice.handler
+    description: GET /device/{device_id}
+    events:
+      - http:
+          path: device/{device_id}
+          method: get
+          request:
+            parameters:
+              paths:
+                device_id: true   
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+resources:
+  Resources:
+    DataTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.DATA_TABLE}
+        AttributeDefinitions:  
+          - AttributeName: device_id
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: S
+          - AttributeName: sensor_profile
+            AttributeType: N  
+        KeySchema:
+          - AttributeName: device_id
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2500
+          WriteCapacityUnits: 900
+        LocalSecondaryIndexes:
+          - IndexName: myLSI
+            KeySchema:
+              - AttributeName: device_id
+                KeyType: HASH
+              - AttributeName: sensor_profile
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
